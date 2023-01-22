@@ -13,7 +13,7 @@ from torch import nn
 
 def main():
      # Training Parameters
-    epochs = 120
+    epochs = 0 # 120
     train_batch_size = 64
     test_batch_size = 64
     train_kwargs = {'batch_size': train_batch_size}
@@ -30,8 +30,8 @@ def main():
         train_kwargs.update(cuda_kwargs)
         test_kwargs.update(cuda_kwargs)
   
-    training_data = Dataset_Supervision(csv_file="data/supervised_50_2.csv", vec_size=4*4*3+6)
-    test_data = Dataset_Supervision(csv_file="data/supervised_full_2.csv", vec_size=4*4*3+6)
+    training_data = Dataset_Supervision(csv_file="data/supervised_first_50.csv", vec_size=4*4*3+6)
+    test_data = Dataset_Supervision(csv_file="data/supervised_full.csv", vec_size=4*4*3+6)
     train_loader = torch.utils.data.DataLoader(training_data, **train_kwargs)
     test_loader = torch.utils.data.DataLoader(test_data, **test_kwargs)
   
@@ -41,9 +41,9 @@ def main():
     trainer = FF_Trainer(actor, train_loader, test_loader, optimizer_actor, nn.CrossEntropyLoss(), device)
 
 
-    _, _, task1 = load_task("./data/data_easy/train/task/3994_task.json")
-    _, _, task2 = load_task("./data/data_easy/train/task/3998_task.json")
-    _, _, task3 = load_task("./data/data_easy/train/task/3999_task.json")
+    _, _, task1 = load_task("./data/train/task/0_task.json")
+    _, _, task2 = load_task("./data/train/task/4_task.json")
+    _, _, task3 = load_task("./data/train/task/14_task.json")
     state = np.array([task1, task2, task3], dtype=np.int32)
 
     for _ in range(epochs):
@@ -59,8 +59,11 @@ def main():
     eval_policy(actor, "./data/val", 100000, 102400, 30, 4, 4, gamma, device)
 
     critic = Value_Network(54, 1).to(device)
-    optimizer_critic = optim.Adam(critic.parameters(), lr=0.0005) # 0.001, 0.00001, 0.0005
-    optimizer_actor_2 = optim.Adam(actor.parameters(), lr=0.0002) # 0.0005, 0.000005, 0.0002
+    # optimizer_critic = optim.Adam(critic.parameters(), lr=0.0005) # 0.001, 0.00001, 0.0005
+    # optimizer_actor_2 = optim.Adam(actor.parameters(), lr=0.0002) # 0.0005, 0.000005, 0.0002
+
+    optimizer_critic = optim.SGD(critic.parameters(), lr=0.003) 
+    optimizer_actor_2 = optim.SGD(actor.parameters(), lr=0.0005) 
     print(actor(torch.tensor(state).to(device).float()))
     print(critic(torch.tensor(state).to(device).float()))
     
@@ -74,7 +77,7 @@ def main():
         state_size=54, 
         n_steps=5, 
         clip_epsilon=0.2, 
-        k=1, 
+        k=5, 
         device=device, 
         optimizer_actor=optimizer_actor_2,
         optimizer_critic=optimizer_critic

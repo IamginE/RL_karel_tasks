@@ -53,17 +53,22 @@ def pretrain(data_path:str, save_path:str, batch_size:int, epochs:int,
             'optimizer_state_dict': optimizer.state_dict()
             }, save_path)
 
-def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:str, id:str, lrs:list, seed:int, device, vec_size=4*4*3+6) -> None:
+def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:str, id:str, lrs:list, seed:int, epochs:int, x_ticks:list,
+    device, vec_size=4*4*3+6, batch_size:int=64, loss = nn.CrossEntropyLoss()) -> None:
     r"""Trains the a model for various learning rates and plots performance measures for comparison in a .png file.
     :param data_path (str): Path to .csv-file with training data.
     :param test_data_path (str): Path to .csv-file with testing data.
     :param plot_path (str): Path to the folder, where plots are saved
     :param logging_path (str): Path to folder, where logs are written.
-    :param id (str): Identifier for the plots and logging, postfix of the respective file names.
+    :param id (str): Identifier for the plots and logging, prefix of the respective file names.
     :param lrs (list): List of learning rates.
     :param seed (int): Seed used for fixing random seeds.
+    :param epochs (int): Number of epochs to train.
+    :param x_ticks (list): List of x-ticks for the plot.
     :param device: Device used in training (cpu or gpu).
     :param vec_size (int): Size of a vector representing a state.
+    :param batch_size (int): Batch size used in training.
+    :param loss: Loss function used in training.
     """
 
     # fix random seed
@@ -73,11 +78,6 @@ def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:s
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-
-    # params for experiments
-    batch_size = 64
-    loss = nn.CrossEntropyLoss()
-    epochs = 20
 
     train_batch_size = batch_size
     test_batch_size = batch_size
@@ -106,7 +106,7 @@ def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:s
     test_accuracies = []
 
     for lr in lrs:
-        logging = logging_path + "/log_lr_" + str(lr) + "_" + id + ".csv"
+        logging = logging_path + "/" + id +  "_log_lr_" + str(lr).replace(".", "_") + ".csv"
         if os.path.isfile(logging):
             raise RuntimeError("CSV with the same name exists: {}".format(logging))
 
@@ -141,21 +141,12 @@ def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:s
             test_accuracies.append(test_accuracy)
 
     names = ["SGD, lr = " + str(lr) for lr in lrs]
-    plot(training_losses, (0,2), names, plot_path + "/training_losses_" + id + ".png", "Training Loss with SGD", "epochs", "cross entropy loss")
-    plot(test_losses, (0,2), names, plot_path + "/test_losses_" + id + ".png", "Test Loss with SGD", "epochs", "cross entropy loss")
-    plot(training_accuracies, (0,100), names, plot_path + "/training_accuracies_" + id + ".png", "Training Accuracy with SGD", "epochs", "accuracy")
-    plot(test_accuracies, (0,100), names, plot_path + "/test_accuracies_" + id + ".png", "Test Accuracy with SGD", "epochs", "accuracy")
+    plot(training_losses, (0,2), x_ticks, names, plot_path + "/" + id + "_training_losses" + ".png", "Training Loss with SGD", "epochs", "cross entropy loss")
+    plot(test_losses, (0,2), x_ticks, names, plot_path + "/" + id + "_test_losses" + ".png", "Test Loss with SGD", "epochs", "cross entropy loss")
+    plot(training_accuracies, (0,100),  x_ticks, names, plot_path + "/" + id + "_training_accuracies" + ".png", "Training Accuracy with SGD", "epochs", "accuracy")
+    plot(test_accuracies, (0,100), x_ticks, names, plot_path + "/" + id + "_test_accuracies" + ".png", "Test Accuracy with SGD", "epochs", "accuracy")
 
-test_params(
-    "./data/supervised_250_2.csv",
-    "./data/val_full_2.csv",
-    "./plots",
-    "./logs",
-    "250",
-    [0.3, 0.1, 0.05, 0.03],
-    1337,
-    torch.device("cuda" if torch.cuda.is_available() else "cpu")
-)  
+ 
 
 
 # fix random seed

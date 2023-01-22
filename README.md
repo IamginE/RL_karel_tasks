@@ -18,7 +18,7 @@ Concretely, this project solves this via a combination of imitation learning and
 - `create_supervised_data.py` contains a single function that uses an environment to generate datasets that can be used for supervised training (imitation learning) and saves them at the specified location.
 - `data_loading.py` handles all data loading tasks. This includes reading from the `.json` files. It has functions that produce the state feature presentation as specified in `project2_train.pdf`. Additionally, it contains the Dataset that handles data flow during supervised training.
 - `environment.py` contains a function for printing a visuliaziation of a vectorized state and the `Karel_Environment` that handles sampling initial states, as well as calculating state transitions and rewards.
-- `imitation_learning.py` contains functions to 1) pretrain a model in a supervised way and save it, 2) test optimzation of supervised learning on the same dataset for different learning rates. 2) produces plots and logs.
+- `imitation_learning.py` contains functions to 1) pretrain a model in a supervised way and save it, 2) test optimzation of supervised learning on the same dataset for different learning rates (with SGD). 2) produces plots and logs.
 - `networks.py` contains actor (policy) and critic (value) network.
 - `plot.py` contains all plotting functions used for evaluation.
 - `rollout_buffer.py` uses a rollout buffer that is heavily inspired by https://github.com/DLR-RM/stable-baselines3/blob/master/stable_baselines3/common/buffers.py. This buffer is used for storing the data produced in episodes generated when training with PPO. It also contains the routines to compute the advantage values.
@@ -27,9 +27,10 @@ Concretely, this project solves this via a combination of imitation learning and
 
 ## Test Environment
 The test environment consists of 5 non-terminal states that are arranged in a straight line with two terminal states, one at each side: `(goal) - (s1) - (s2) - (s3) - (s4) - (s5) - (goal)`
-There are two actions: `move left` or `move right` and the goal is to reach a terminal state using as few moves as possible.
+There are two actions: `move left` or `move right` that transition deterministically to the neighbour states, and the goal is to reach a terminal state using as few moves as possible.
 
-## Reporducibility of results
+## Reproducibility of results
 All of the results reported in `project2_train.pdf` can be reproduced by running `reproduce_all.py` from the main folder of the project.
 However, this runs a lot of experiments and, therefore, needs a lot of runtime.
+Please also note that some functions rais runtime errors, if they would overwrite a file that already exists. This means reproduce_all.py may cause a runtime error if certain files it tries to write already exist.
 
