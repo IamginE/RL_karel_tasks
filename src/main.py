@@ -1,7 +1,7 @@
 from trainer import FF_Trainer, PPO_Trainer
 from data_loading import Dataset_Supervision
 from networks import Policy_Network, Value_Network
-from environment import Karel_Environment_Single
+from environment import Karel_Environment
 from data_loading import load_task
 from evaluation import eval_policy
 
@@ -68,12 +68,11 @@ def main():
     ppo_trainer = PPO_Trainer(actor,
         critic, 
         cut_off=cut_off, 
-        environment=Karel_Environment_Single(24000, "./data/train", 4, 4, False),
+        environment=Karel_Environment(24000, "./data/train", 4, 4, False),
         num_episodes=64,
         gamma=gamma, 
         state_size=54, 
         n_steps=5, 
-        critic_coeff=0.05, 
         clip_epsilon=0.2, 
         k=1, 
         device=device, 

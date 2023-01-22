@@ -1,5 +1,5 @@
 from data_loading import load_seq, load_task
-from environment import Karel_Environment_Single
+from environment import Karel_Environment
 
 import numpy as np
 import torch
@@ -7,7 +7,7 @@ import torch
 def eval_policy(policy, filepath:str, start:int, end:int, max_actions:int, num_rows:int, 
     num_cols:int, gamma:float, device):
     policy.eval()
-    env = Karel_Environment_Single(-1, "", 4, 4) # we don't need to sample initial states here
+    env = Karel_Environment(-1, "", 4, 4) # we don't need to sample initial states here
     num_solved = 0
     num_shortest = 0
     returns = 0

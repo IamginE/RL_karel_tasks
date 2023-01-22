@@ -1,12 +1,10 @@
-from data_loading import load_seq, load_task
-
 import numpy as np
 from typing import Tuple
 import random
 import torch
 import torch.optim as optim
 
-from trainer import FF_Trainer, PPO_Trainer
+from trainer import PPO_Trainer
 from networks import Policy_Network, Value_Network
 """actions:
 0 - move left
@@ -21,11 +19,11 @@ class Simple_Test_Env:
         self.reward_success = 10.0
        
 
-    def sample_task(self) -> np.ndarray:
+    def sample_task(self) -> Tuple[list, np.ndarray]:
         i = random.randint(0, 4)
         vec = np.zeros(5, dtype=int)
         vec[i] = 1
-        return vec
+        return [], vec
 
 
     def transition(self, vec:np.ndarray, action:int) -> Tuple[np.ndarray, float, bool]:
@@ -68,10 +66,10 @@ def main():
     actor.set_softmax(True)
 
     critic = Value_Network(5, 1).to(device)
-    optimizer_critic = optim.Adam(critic.parameters(), lr=0.003) # 0.00001, 0.0005
-    optimizer_actor_2 = optim.Adam(actor.parameters(), lr=0.001) # 0.000005, 0.0002
+    optimizer_critic = optim.Adam(critic.parameters(), lr=0.003) 
+    optimizer_actor_2 = optim.Adam(actor.parameters(), lr=0.001) 
 
-    state = env.sample_task()
+    _, state = env.sample_task()
     print(state)
     print(actor(torch.tensor(state).to(device).float()))
     print(critic(torch.tensor(state).to(device).float()))
@@ -85,9 +83,8 @@ def main():
         gamma=gamma, 
         state_size=5, 
         n_steps=5, 
-        critic_coeff=0.05, 
         clip_epsilon=0.2, 
-        k=1, 
+        k=2, 
         device=device, 
         optimizer_actor=optimizer_actor_2,
         optimizer_critic=optimizer_critic
@@ -97,7 +94,7 @@ def main():
     print(actor(torch.tensor(state).to(device).float()))
     print(critic(torch.tensor(state).to(device).float())) 
     for _ in range(10):
-        state = env.sample_task()  
+        _, state = env.sample_task()  
         print(state)
         print(actor(torch.tensor(state).to(device).float()))
         print(critic(torch.tensor(state).to(device).float())) 

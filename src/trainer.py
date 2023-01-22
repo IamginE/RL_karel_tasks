@@ -75,14 +75,13 @@ class PPO_Trainer:
     r""" Trainer for an PPO agent that does the training and evaluation loop.
     """
     def __init__(self, actor, critic, cut_off:int, environment, gamma:float,
-                state_size:int, num_episodes:int, n_steps:int, critic_coeff:float, 
+                state_size:int, num_episodes:int, n_steps:int, 
                 clip_epsilon:float, k:int, device, optimizer_actor, optimizer_critic) -> None:         
         self.trained_epochs = 0
         self.cut_off = cut_off
         self.environment = environment
         self.num_episodes = num_episodes
         self.n_steps = n_steps
-        self.critic_coeff = critic_coeff
         self.clip_epsilon = clip_epsilon
         self.k = k
         self.actor = actor
@@ -101,8 +100,7 @@ class PPO_Trainer:
         r""" Generate a rollout for the current policy network.
         """
         self.rollout_buffer.reset()
-        _, state = self.environment.sample_karel_task()
-        # state = self.environment.sample_task()   
+        _, state = self.environment.sample_task()  
         
         with torch.no_grad():
             terminal = False

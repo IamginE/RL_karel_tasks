@@ -2,7 +2,7 @@ import json
 import numpy as np
 import torch
 from typing import Tuple
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 def read_json(filepath:str) -> dict:
     f = open(filepath)

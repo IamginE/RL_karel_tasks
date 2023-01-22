@@ -90,15 +90,4 @@ probs=\n{self.probs},
 nstep_returns=\n{self.nstep_returns},
 deltas=\n{self.deltas})"""
 
-# buffer = Rollout_Buffer(5, 2, 2, torch.device("cpu"), 0.5)
-# buffer.add(np.array([[1, 2], [3, 4]]), np.array([1, 0]), np.array([0, 2]), np.array([0.9, 0.8]), torch.tensor([4, 1]))
-# buffer.add(np.array([[1, 2], [3, 4]]), np.array([2, 0]), np.array([2, 2]), np.array([0.9, 0.8]), torch.tensor([4, 2]))
-# buffer.add(np.array([[1, 2], [3, 4]]), np.array([3, 0]), np.array([0, 2]), np.array([0.9, 0.8]), torch.tensor([4, 3]))
-# buffer.add(np.array([[1, 2], [3, 4]]), np.array([4, 0]), np.array([0, 2]), np.array([0.9, 0.8]), torch.tensor([4, 4]))
-# buffer.add(np.array([[1, 2], [3, 1]]), np.array([5, 1]), np.array([0, 2]), np.array([0.7, 0.7]), torch.tensor([4, 5]))
-# buffer.calculate_returns_deltas(3, torch.tensor([1, 2]))
-# print(repr(buffer))
 
-# a = torch.tensor([[[1, 2, 3], [3, 4, 3]], [[3,5,6], [3,7,8]]])
-# print(a.shape)
-# print((a.reshape((a.shape[0]*a.shape[1],a.shape[2]))))
