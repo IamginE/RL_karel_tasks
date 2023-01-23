@@ -55,7 +55,7 @@ def pretrain(data_path:str, save_path:str, batch_size:int, epochs:int,
 
 def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:str, id:str, lrs:list, seed:int, epochs:int, x_ticks:list,
     device, vec_size=4*4*3+6, batch_size:int=64, loss = nn.CrossEntropyLoss()) -> None:
-    r"""Trains the a model for various learning rates and plots performance measures for comparison in a .png file.
+    r"""Trains a model for various learning rates via supervised learning, logs trainining and test loss/accuracy, and plots performance measures for comparison in .png files.
     :param data_path (str): Path to .csv-file with training data.
     :param test_data_path (str): Path to .csv-file with testing data.
     :param plot_path (str): Path to the folder, where plots are saved

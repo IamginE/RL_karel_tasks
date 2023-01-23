@@ -91,12 +91,12 @@ class PPO_Trainer:
         self.optimizer_critic = optimizer_critic
         self.rollout_buffer = Rollout_Buffer(buffer_size=cut_off, state_size=state_size, device=device, gamma=gamma)
     
-    def sample_action(self, probs):
+    def sample_action(self, probs) -> int:
         r""" Sample an action from the given choices and probabilities.
         """
         return np.random.choice(np.arange(len(probs)), p=probs)
 
-    def generate_rollout(self):
+    def generate_rollout(self) -> None:
         r""" Generate a rollout for the current policy network.
         """
         self.rollout_buffer.reset()
@@ -110,7 +110,6 @@ class PPO_Trainer:
                 value = self.critic(torch.from_numpy(state_model).float().to(self.device))
                 action_probs = action_probs.clone().cpu().numpy()
                 action_probs = action_probs[0]
-                # print(self.rollout_buffer)
                 action = self.sample_action(action_probs)
                 action_prob = action_probs[action]
                 next_state, reward, terminal = self.environment.transition(state, action)
@@ -121,13 +120,17 @@ class PPO_Trainer:
             last_value = self.critic(torch.from_numpy(state_model).float().to(self.device))
             self.rollout_buffer.calculate_returns_deltas(self.n_steps, last_value, not terminal)
 
-    def train(self, epochs:int, log_interval:int):
+    def train(self, epochs:int, log_interval:int) -> Tuple[list, list]:
         r""" Train the policy and critic networks for the given number of epochs.
+        :returns: The losses of the actor and critic networks.
         """
+        actor_losses = []
+        critic_losses = []
         self.actor.train()
         self.critic.train()
 
         for epoch in range(epochs):
+            actor_loss = 0.0
             states = []
             actions = []
             probs = []
@@ -155,7 +158,6 @@ class PPO_Trainer:
             
             self.optimizer_critic.zero_grad()
             for _ in range(self.k):
-                # self.optimizer.zero_grad()
                 self.optimizer_actor.zero_grad()
                 new_probs = self.actor(states)
                 new_probs = new_probs[torch.arange(new_probs.size(0)), actions.long()]
@@ -167,14 +169,10 @@ class PPO_Trainer:
                 policy_loss_2 = deltas * probs_ratio_clipped
                 policy_loss = -torch.min(policy_loss_1, policy_loss_2).mean()
 
-                # combination of both
-                # loss = policy_loss + self.critic_coeff * value_loss
-
-                # Optimization step
-                # loss.backward()
-                # self.optimizer.step()
                 policy_loss.backward()
                 self.optimizer_actor.step()
+                
+                actor_loss += policy_loss.item()
             
             new_values = self.critic(states)
             new_values = new_values.flatten()
@@ -183,7 +181,11 @@ class PPO_Trainer:
             value_loss.backward()
             self.optimizer_critic.step()
             
+            actor_losses.append(actor_loss/self.k)
+            critic_losses.append(value_loss.item())
             if epoch % log_interval == 0:
                 print('Train Epoch: {} \tValue Loss: {:.6f} \tActor Loss: {:.6f}'.format(self.trained_epochs, value_loss.item(), policy_loss.item()))
 
             self.trained_epochs += 1
+
+        return actor_losses, critic_losses

@@ -39,6 +39,8 @@ def dir_to_num(dir:str) -> int:
 # avatar_row_post, avatar_col_post, avatar_or_post, flag_terminal]
 def state_to_vec(state_dict:dict) -> Tuple[int, int, np.ndarray]:
     r""" Transforms the given dictionary representing a state parsed from a .json file to its vectorized representation.
+    :param state_dict: Dictionary representing a state parsed from a .json file.
+    :return: Tuple of the form (num_rows, num_cols, state_vector).
     """
 
     # initialize state vector
