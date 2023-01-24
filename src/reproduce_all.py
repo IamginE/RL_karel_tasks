@@ -103,3 +103,46 @@ actor.set_softmax(True)
 eval_policy(actor, "./data/train", 0, 24000, 30, 4, 4, gamma, device)
 eval_policy(actor, "./data/val", 100000, 102400, 30, 4, 4, gamma, device)
 """
+
+# Test supervised learning for different amount of praining data. 
+# The main purpose is to find a good learning rate and a good stopping point for the training.
+
+"""
+# first 50
+test_params("data/supervised_first_50.csv",
+            "data/supervised_val.csv",
+            "plots",
+            "logs",
+            "first_50",
+            [0.3, 0.1, 0.05, 0.03],
+            SEED,
+            200,
+            [10*i for i in range(0, 21)],
+            torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+
+
+# first 100
+test_params("data/supervised_first_100.csv",
+            "data/supervised_val.csv",
+            "plots",
+            "logs",
+            "first_100",
+            [0.3, 0.1, 0.05, 0.03],
+            SEED,
+            100,
+            [5*i for i in range(0, 21)],
+            torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+
+
+# first 4000
+test_params("data/supervised_first_4000.csv",
+            "data/supervised_val.csv",
+            "plots",
+            "logs",
+            "first_4000",
+            [0.3, 0.1, 0.05, 0.03],
+            SEED,
+            50,
+            [2*i for i in range(0, 26)],
+            torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+"""
