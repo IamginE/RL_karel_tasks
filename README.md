@@ -30,7 +30,7 @@ The test environment consists of 5 non-terminal states that are arranged in a st
 There are two actions: `move left` or `move right` that transition deterministically to the neighbour states, and the goal is to reach a terminal state using as few moves as possible.
 
 ## Reproducibility of results
-All of the results reported in `project2_train.pdf` can be reproduced by running `reproduce_all.py` from the main folder of the project.
+All of the results reported in `project2_train.pdf` can be reproduced by uncommenting the corresponding sections in `reproduce_all.py` and running from the main folder of the project.
 However, this runs a lot of experiments and, therefore, needs a lot of runtime.
-Please also note that some functions rais runtime errors, if they would overwrite a file that already exists. This means reproduce_all.py may cause a runtime error if certain files it tries to write already exist.
+Please also note that some functions raise runtime errors, if they would overwrite a file that already exists. This means reproduce_all.py may cause a runtime error if certain files it tries to write already exist.
 

@@ -13,7 +13,7 @@ from torch import nn
 
 
 def pretrain(data_path:str, save_path:str, batch_size:int, epochs:int, 
-    loss, model, optimizer, device, vec_size=4*4*3+6) -> None:
+    loss, model, optimizer, device, log_interval:int=100, vec_size:int=4*4*3+6) -> None:
     r"""Pretrains a model on the given data and saves the model parameter to a file.
     :param data_path (str): Path to .csv-file with pretraining data.
     :param save_path (str): Path to the file, where the model is saved.
@@ -23,6 +23,7 @@ def pretrain(data_path:str, save_path:str, batch_size:int, epochs:int,
     :param model: Network to train.
     :param optimizer: Optimizer used for training.
     :param device: Device used in training (cpu or gpu).
+    :param log_interval (int): Interval for printing training progress.
     :param vec_size (int): Size of a vector representing a state.
     """
 
@@ -46,7 +47,7 @@ def pretrain(data_path:str, save_path:str, batch_size:int, epochs:int,
     trainer = FF_Trainer(model, train_loader, None, optimizer, loss, device)
 
     for _ in range(epochs):
-        trainer.train(10)
+        trainer.train(log_interval)
     torch.save({
             'epoch': epochs,
             'model_state_dict': model.state_dict(),
@@ -148,27 +149,3 @@ def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:s
 
  
 
-
-# fix random seed
-#  seed = 1337
-#  random.seed(seed)
-#  np.random.seed(seed)
-#  torch.manual_seed(seed)
-#  torch.cuda.manual_seed(seed)
-#  torch.backends.cudnn.deterministic = True
-#  torch.backends.cudnn.benchmark = False
-#  
-#  model = Policy_Network(54, 6, False)
-#  device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#  model.to(device)
-#  
-#  pretrain("./data/supervised_1000_2.csv",
-#      "./saved_models/actor_pretrained.pt",
-#      1337,
-#      64,
-#      30,
-#      nn.CrossEntropyLoss(),
-#      model,
-#      optim.SGD(model.parameters(), lr=0.5),
-#      device
-#      )

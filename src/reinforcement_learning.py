@@ -64,7 +64,7 @@ def test_params_rl(train_data_path:str, test_data_path:str, plot_path:str,
     torch.backends.cudnn.benchmark = False
     
     # load models 
-    actor = Policy_Network(54, 6, True)
+    actor = Policy_Network(54, 6, False)
     critic = Value_Network(54, 1)
     if load_actor:
         checkpoint_actor = torch.load(actor_path)
@@ -73,6 +73,7 @@ def test_params_rl(train_data_path:str, test_data_path:str, plot_path:str,
         checkpoint_critic = torch.load(critic_path)
         critic.load_state_dict(checkpoint_critic['model_state_dict'])
     
+    actor.set_softmax(True)
     actor.to(device)
     critic.to(device)
     
