@@ -39,13 +39,13 @@ class FF_Trainer:
             
 
             if batch_idx % log_interval == 0:
-                print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                print('Train Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.6f}'.format(
                     self.trained_epochs, batch_idx * len(input), len(self.train_loader.dataset),
                     100. * batch_idx / len(self.train_loader), loss.item()))
         self.trained_epochs += 1
         total_loss /= float(num_inputs)
         accuracy = (num_correct / float(num_inputs)) * 100
-        print('\nTrain set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        print('\nTrain set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
             total_loss, num_correct, len(self.train_loader.dataset), accuracy))
         return total_loss, accuracy
         
@@ -67,7 +67,7 @@ class FF_Trainer:
             total_loss /= float(num_inputs)
             accuracy = (num_correct / float(num_inputs)) * 100
         
-        print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
             total_loss, num_correct, len(self.eval_loader.dataset), accuracy))
         return total_loss, accuracy
 
