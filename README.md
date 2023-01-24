@@ -18,11 +18,13 @@ Concretely, this project solves this via a combination of imitation learning and
 - `create_supervised_data.py` contains a single function that uses an environment to generate datasets that can be used for supervised training (imitation learning) and saves them at the specified location.
 - `data_loading.py` handles all data loading tasks. This includes reading from the `.json` files. It has functions that produce the state feature presentation as specified in `project2_train.pdf`. Additionally, it contains the Dataset that handles data flow during supervised training.
 - `environment.py` contains a function for printing a visuliaziation of a vectorized state and the `Karel_Environment` that handles sampling initial states, as well as calculating state transitions and rewards.
+- `evaluation.py` contains a function used to execute and evaluate policies on multiple Karel tasks and computes the number of tasks solved as well as the average return obtained.
+- `execute_policy.py` contains functions used to print out the actions from a policy executed on a given Karel task, e.g., prints `["move", "turnRight", "fiish"]` to the console.
 - `imitation_learning.py` contains functions to 1) pretrain a model in a supervised way and save it, 2) test optimzation of supervised learning on the same dataset for different learning rates (with SGD). 2) produces plots and logs.
 - `networks.py` contains actor (policy) and critic (value) network.
 - `plot.py` contains all plotting functions used for evaluation.
 - `rollout_buffer.py` uses a rollout buffer that is heavily inspired by https://github.com/DLR-RM/stable-baselines3/blob/master/stable_baselines3/common/buffers.py. This buffer is used for storing the data produced in episodes generated when training with PPO. It also contains the routines to compute the advantage values.
-- `trainer.py` cotains classes handling training. The `PPO_Trainer` applies the PPO-Algorithm, while the `FF_trainer` is used for supervised training.
+- `trainer.py` cotains classes handling training. The `PPO_Trainer` applies the PPO-Algorithm, while the `FF_trainer` is used for supervised training. Additionally, the trainer compute some performance metrics.
 - `test_env.py` contains a very simplistic environment for sanity checking the PPO-Algorithm (see below). 
 
 ## Test Environment
