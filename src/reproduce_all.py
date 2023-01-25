@@ -5,6 +5,8 @@ from data_loading import Dataset_Supervision
 from trainer import FF_Trainer
 from evaluation import eval_policy
 from reinforcement_learning import test_params_rl
+from plot import plot
+from environment import Karel_Environment
 
 import torch
 import numpy as np
@@ -361,4 +363,62 @@ test_params_rl(train_data_path="./data/train",
     save_critic=True, 
     actor_path_out="./saved_models/actor_first_4000_2000.pt", 
     critic_path_out="./saved_models/critic_first_4000_2000.pt")
+"""
+
+# Plot the learning curves for PPO
+"""
+model_names=["pretrained first 50", "pretrained first 100", "pretrained first 4000"]
+training_tasks_shortest = []
+validation_tasks_shortest = []
+training_tasks = []
+validation_tasks = []
+training_returns = []
+validation_returns = []
+for name in ["first_50_2000_log_ppo_solution.csv", "first_100_2000_log_ppo_solution.csv", "first_4000_2000_log_ppo_solution.csv"]:
+    data = np.loadtxt("logs/" + name, delimiter=",", skiprows=1)
+    training_returns.append(data[:, 1])
+    training_tasks_shortest.append(data[:, 2])
+    training_tasks.append(data[:, 3])
+    validation_returns.append(data[:, 4])
+    validation_tasks_shortest.append(data[:, 5])
+    validation_tasks.append(data[:, 6])
+
+
+plot(training_returns, (0,10), [200*i for i in range(0,11)], model_names, 
+    "plots/ppo_avg_return_tr.png", 
+    "Average return on the training dataset.", 
+    "PPO training epochs", "average return", 
+    linspace_mul=200,
+    start_origin=True)
+plot(training_tasks_shortest, (0,24000), [200*i for i in range(0,11)], model_names, 
+    "plots/ppo_shortest_sequences_tr.png", 
+    "Number of tasks solved with the shortest sequence in the training dataset.", 
+    "PPO training epochs", "number of tasks solved", 
+    linspace_mul=200,
+    start_origin=True)
+plot(training_tasks, (0,24000), [200*i for i in range(0,11)], model_names, 
+    "plots/ppo_num_solved_tr.png", 
+    "Number of tasks solved in the training dataset.", 
+    "PPO training epochs", "number of tasks solved", 
+    linspace_mul=200,
+    start_origin=True)
+
+plot(validation_returns, (0,10), [200*i for i in range(0,11)], model_names,
+    "plots/ppo_avg_return_val.png",
+    "Average return on the validation dataset.",
+    "PPO training epochs", "average return", 
+    linspace_mul=200,
+    start_origin=True)
+plot(validation_tasks_shortest, (0,2400), [200*i for i in range(0,11)], model_names,
+    "plots/ppo_shortest_sequences_val.png",
+    "Number of tasks solved with the shortest sequence in the validation dataset.",
+    "PPO training epochs", "number of tasks solved", 
+    linspace_mul=200,
+    start_origin=True)
+plot(validation_tasks, (0,2400), [200*i for i in range(0,11)], model_names,
+    "plots/ppo_num_solved_val.png",
+    "Number of tasks solved in the validation dataset.",
+    "PPO training epochs", "number of tasks solved",
+    linspace_mul=200, 
+    start_origin=True)
 """
