@@ -19,7 +19,7 @@ Concretely, this project solves this via a combination of imitation learning and
 - `data_loading.py` handles all data loading tasks. This includes reading from the `.json` files. It has functions that produce the state feature presentation as specified in `project2_train.pdf`. Additionally, it contains the Dataset that handles data flow during supervised training.
 - `environment.py` contains a function for printing a visuliaziation of a vectorized state and the `Karel_Environment` that handles sampling initial states, as well as calculating state transitions and rewards.
 - `evaluation.py` contains a function used to execute and evaluate policies on multiple Karel tasks and computes the number of tasks solved as well as the average return obtained.
-- `execute_policy.py` contains functions used to print out the actions from a policy executed on a given Karel task, e.g., prints `["move", "turnRight", "fiish"]` to the console.
+- `execute_policy.py` contains functions used to print out the actions from a policy executed on a given Karel task, e.g., prints `["move", "turnRight", "finish"]` to the console.
 - `imitation_learning.py` contains functions to 1) pretrain a model in a supervised way and save it, 2) test optimzation of supervised learning on the same dataset for different learning rates (with SGD). 2) produces plots and logs.
 - `networks.py` contains actor (policy) and critic (value) network.
 - `plot.py` contains all plotting functions used for evaluation.

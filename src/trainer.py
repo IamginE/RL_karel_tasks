@@ -184,7 +184,7 @@ class PPO_Trainer:
             actor_losses.append(actor_loss/self.k)
             critic_losses.append(value_loss.item())
             if epoch % log_interval == 0:
-                print('Train Epoch: {} \tValue Loss: {:.6f} \tActor Loss: {:.6f}'.format(self.trained_epochs, value_loss.item(), policy_loss.item()))
+                print('Train Epoch: {} \tValue Loss: {:.4f} \tActor Loss: {:.4f}'.format(self.trained_epochs, value_loss.item(), policy_loss.item()))
 
             self.trained_epochs += 1
 

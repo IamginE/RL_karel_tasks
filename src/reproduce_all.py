@@ -4,6 +4,7 @@ from networks import Policy_Network
 from data_loading import Dataset_Supervision
 from trainer import FF_Trainer
 from evaluation import eval_policy
+from reinforcement_learning import test_params_rl
 
 import torch
 import numpy as np
@@ -274,4 +275,90 @@ trainer_test_data.evaluate()
 actor.set_softmax(True)
 eval_policy(actor, "./data/train", 0, 24000, 30, 4, 4, gamma, device)
 eval_policy(actor, "./data/val", 100000, 102400, 30, 4, 4, gamma, device)
+"""
+
+# Train the different pretrained models on the full training task set with PPO
+"""
+# model trained on first 50 tasks
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_50_2000",
+    seed=SEED, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, False),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=200, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=False, 
+    actor_path="./saved_models/actor_pretrained_first_50.pt", 
+    critic_path="",
+    save_actor=True, 
+    save_critic=True, 
+    actor_path_out="./saved_models/actor_first_50_2000.pt", 
+    critic_path_out="./saved_models/critic_first_50_2000.pt")
+
+
+# model trained on first 100 tasks
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_100_2000",
+    seed=SEED, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, False),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=200, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=False, 
+    actor_path="./saved_models/actor_pretrained_first_100.pt", 
+    critic_path="",
+    save_actor=True, 
+    save_critic=True, 
+    actor_path_out="./saved_models/actor_first_100_2000.pt", 
+    critic_path_out="./saved_models/critic_first_100_2000.pt")
+
+
+# model trained on first 4000 tasks
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_4000_2000",
+    seed=SEED, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, False),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=200, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=False, 
+    actor_path="./saved_models/actor_pretrained_first_4000.pt", 
+    critic_path="",
+    save_actor=True, 
+    save_critic=True, 
+    actor_path_out="./saved_models/actor_first_4000_2000.pt", 
+    critic_path_out="./saved_models/critic_first_4000_2000.pt")
 """

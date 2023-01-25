@@ -13,8 +13,8 @@ import torch.optim as optim
 from torch import nn
 
 
-def test_params_rl(train_data_path:str, test_data_path:str, plot_path:str, 
-    logging_path:str, id:str, seed:int, epochs:int, x_ticks:list, 
+def test_params_rl(train_data_path:str, test_data_path:str, 
+    logging_path:str, id:str, seed:int, env, epochs:int, 
     gamma:float, lr_actor:float, lr_critic:float, eval_interval:int, device, 
     vec_size:int=4*4*3+6, num_episodes:int=64, k:int=5, n_steps:int=5, clip_epsilon:float=0.2,
     load_actor=True, load_critic=False, actor_path:str="", critic_path:str="",
@@ -24,12 +24,11 @@ def test_params_rl(train_data_path:str, test_data_path:str, plot_path:str,
     If load values are True, the networks are loaded from the given paths and trained for the given number of epochs. Otherwise, the networks are trained from scratch.
     :param train_data_path (str): Path to folder with training data.
     :param test_data_path (str): Path to folder with testing data.
-    :param plot_path (str): Path to the folder, where plots are saved
     :param logging_path (str): Path to folder, where logs are written.
     :param id (str): Identifier for the plots and logging, prefix of the respective file names.
     :param seed (int): Seed used for fixing random seeds.
+    :param env: Environment used for training.
     :param epochs (int): Number of epochs to train.
-    :param x_ticks (list): List of x-ticks for the plot.
     :param gamma (float): Discount factor.
     :param lr_actor (float): Learning rate for the actor (policy) network.
     :param lr_critic (float): Learning rate for the critic (value) network.
@@ -86,7 +85,7 @@ def test_params_rl(train_data_path:str, test_data_path:str, plot_path:str,
     ppo_trainer = PPO_Trainer(actor,
         critic, 
         cut_off=cut_off, 
-        environment=Karel_Environment(24000, train_data_path, 4, 4, False),
+        environment=env,
         num_episodes=num_episodes,
         gamma=gamma, 
         state_size=vec_size, 
@@ -98,18 +97,22 @@ def test_params_rl(train_data_path:str, test_data_path:str, plot_path:str,
         optimizer_critic=optimizer_critic
     )
     
-    logging = logging_path + "/" + id +  "_log_ppo_solution" + ".txt"
+    logging = logging_path + "/" + id +  "_log_ppo_solution" + ".csv"
     if os.path.isfile(logging):
-        raise RuntimeError("Text file with the same name exists: {}".format(logging))
+        raise RuntimeError("CSV file with the same name exists: {}".format(logging))
+    
+    logging_loss = logging_path + "/" + id +  "_log_ppo_solution_loss" + ".csv"
+    if os.path.isfile(logging):
+        raise RuntimeError("CSV file with the same name exists: {}".format(logging_loss))
 
     actor_losses = []
     critic_losses = []
     
     with open(logging, 'w') as fp:
-        fp.write("Epoch, Average Return Train, Num Shortest Train, Num Solved Train, Average Return Test, Num Shortest Test, Num Solved Test,\n")
+        fp.write("Epoch, Average Return Train, Num Shortest Train, Num Solved Train, Average Return Test, Num Shortest Test, Num Solved Test\n")
         avg_return_train, num_shortest_train, num_solved_train = eval_policy(actor, train_data_path, train_min, train_max, 30, 4, 4, gamma, device)
         avg_return_test, num_shortest_test, num_solved_test = eval_policy(actor, test_data_path, test_min, test_max, 30, 4, 4, gamma, device)
-        out_str = "{}, {}, {}, {}, {}, {}, {}\n".format(0, avg_return_train, num_shortest_train, num_solved_train, avg_return_test, num_shortest_test, num_solved_test)
+        out_str = "{}, {:.4f}, {}, {}, {:.4f}, {}, {}\n".format(0, avg_return_train, num_shortest_train, num_solved_train, avg_return_test, num_shortest_test, num_solved_test)
         fp.write(out_str)
 
         num_evals = epochs // eval_interval
@@ -133,4 +136,34 @@ def test_params_rl(train_data_path:str, test_data_path:str, plot_path:str,
             'optimizer_state_dict': optimizer_critic.state_dict()
             }, critic_path_out)
 
+    with open(logging_loss, 'w') as fp:
+        fp.write("Epoch, Average Actor Loss, Critic Loss\n")
+        for i in range (len(actor_losses)):
+            out_str = "{}, {:.4f}, {:.4f}\n".format(i, actor_losses[i], critic_losses[i])
+            fp.write(out_str)
     
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="no_pretraining",
+    seed=1337, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, False),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=200, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=False, 
+    load_critic=False, 
+    actor_path="", 
+    critic_path="",
+    save_actor=False, 
+    save_critic=False, 
+    actor_path_out="", 
+    critic_path_out="")
