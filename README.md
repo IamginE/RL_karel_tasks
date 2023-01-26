@@ -24,7 +24,7 @@ Concretely, this project solves this via a combination of imitation learning and
 - `networks.py` contains actor (policy) and critic (value) network.
 - `plot.py` contains all plotting functions used for evaluation.
 - `rollout_buffer.py` uses a rollout buffer that is heavily inspired by https://github.com/DLR-RM/stable-baselines3/blob/master/stable_baselines3/common/buffers.py. This buffer is used for storing the data produced in episodes generated when training with PPO. It also contains the routines to compute the advantage values.
-- `trainer.py` cotains classes handling training. The `PPO_Trainer` applies the PPO-Algorithm, while the `FF_trainer` is used for supervised training. Additionally, the trainer compute some performance metrics.
+- `trainer.py` cotains classes handling training. The `PPO_Trainer` applies the PPO-Algorithm, while the `FF_trainer` is used for supervised training. Additionally, the trainer compute some performance metrics. Please note that I index/count epochs starting from 0.
 - `test_env.py` contains a very simplistic environment for sanity checking the PPO-Algorithm (see below). 
 
 ## Test Environment
@@ -33,6 +33,7 @@ There are two actions: `move left` or `move right` that transition deterministic
 
 ## Reproducibility of results
 All of the results reported in `project2_train.pdf` can be reproduced by uncommenting the corresponding sections in `reproduce_all.py` and running it from the main folder of the project.
+Please note that I index/count epochs starting from 0, while I plot them starting from 1.
 
 I trained all models on CPU with a fixed random seed. However, since dataloading is different with GPU, the results may change when models are trained on GPU instead of CPU.
 

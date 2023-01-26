@@ -86,19 +86,35 @@ def state_to_string(state:np.ndarray, include_post:bool, num_rows:int, num_cols:
 class Karel_Environment:
     r"""Environment that samples initial states and models transitions.
     """
-    def __init__(self, num_karel_tasks:int, filepath:str, num_rows:int, num_cols:int, heuristic_rewards:bool=False) -> None:
+    def __init__(self, num_karel_tasks:int, filepath:str, num_rows:int, num_cols:int, heuristic_rewards:bool=False,
+        reward_default:float = -0.1,
+        reward_success:float = 10.0,
+        reward_unecessary_action:float = -1.0,
+        reward_necessary_action:float = 1.0,
+        reward_crash:float = 0.0) -> None:
         r"""Operates on a single state and action.
         :param num_karel_tasks (int): Number of Karel tasks in filepath.
-        :param filepath (string): Directory, where sequences and tasks are stored in. 
+        :param filepath (string): Directory, where sequences and tasks are stored in .json format in the respective folders. 
         :param num_rows (int): Number of rows in the grid.
         :param num_cols (int): Number of columns in the grid.
-        .json format in the respective folders.
+        :param heuristic_rewards (bool): If true, rewards are calculated based on a heuristic.
+        :param reward_default (float): Reward for default action.
+        :param reward_success (float): Reward for success (successfully reached the post-grid).
+        :param reward_unecessary_action (float): Reward for unecessary marker actions (i.e. unecessarily picking up or placing markers).
+        :param reward_necessary_action (float): Reward for necessary marker actions (i.e. picking up or placing markers, such that they match the post-grid).
+        :param reward_crash (float): Reward for crashing the Karel task or finishing in state that is not the post-grid.
         """
         self.num_karel_tasks = num_karel_tasks
         self.filepath = filepath
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.heuristic_rewards = heuristic_rewards
+        self.reward_default = reward_default
+        self.reward_success = reward_success
+        self.reward_unecessary_action = reward_unecessary_action
+        self.reward_necessary_action = reward_necessary_action
+        self.reward_crash = reward_crash
+        
 
     def sample_task(self) -> Tuple[list, np.ndarray]:
         idx = random.randint(0, self.num_karel_tasks-1)
@@ -179,11 +195,6 @@ class Karel_Environment:
         return vec, terminal
 
     def get_reward(self, vec:np.ndarray, action:int) -> float:
-        reward_default = -0.1
-        reward_success = 10.0
-        reward_unecessary_action = -1.0
-        reward_necessary_action = 1.0
-        reward_crash = 0.0
 
         size = self.num_rows * self.num_cols
         avatar_row = vec[3*size]
@@ -193,53 +204,53 @@ class Karel_Environment:
             avatar_or = vec[3*size+2]
             if avatar_or == 0: # NORTH
                 if avatar_row - 1 < 0: # run out of grid -> crash
-                    return reward_crash
+                    return self.reward_crash
                 elif vec[self.num_cols * (avatar_row - 1) + avatar_col] == 1: # run into wall -> crash
-                    return reward_crash
+                    return self.reward_crash
                 else:
-                    return reward_default
+                    return self.reward_default
             elif avatar_or == 1: # EAST
                 if avatar_col + 1 >= self.num_cols: # run out of grid -> crash
-                    return reward_crash
+                    return self.reward_crash
                 elif vec[self.num_cols * avatar_row + (avatar_col + 1)] == 1: # run into wall -> crash
-                    return reward_crash
+                    return self.reward_crash
                 else:
-                    return reward_default
+                    return self.reward_default
             elif avatar_or == 2: # SOUTH
                 if avatar_row + 1 > self.num_rows: # run out of grid -> crash
-                    return reward_crash
+                    return self.reward_crash
                 elif vec[self.num_cols * (avatar_row + 1) + avatar_col] == 1: # run into wall -> crash
-                    return reward_crash
+                    return self.reward_crash
                 else:
-                    return reward_default
+                    return self.reward_default
             elif avatar_or == 3: # WEST
                 if avatar_col - 1 < 0: # run out of grid -> crash
-                    return reward_crash
+                    return self.reward_crash
                 elif vec[self.num_cols * avatar_row + (avatar_col - 1)] == 1: # run into wall -> crash
-                    return reward_crash
+                    return self.reward_crash
                 else:
-                    return reward_default
+                    return self.reward_default
         elif action == 3:
             if vec[self.num_cols * avatar_row + avatar_col + size] == 0: # marker not there -> crash
-                return reward_crash
+                return self.reward_crash
             elif vec[self.num_cols * avatar_row + avatar_col + 2*size] == 1: # marker in postgrid
-                return reward_unecessary_action
+                return self.reward_unecessary_action
             else: # marker not in postgrid
-                return reward_necessary_action
+                return self.reward_necessary_action
         elif action == 4:
             if vec[self.num_cols * avatar_row + avatar_col + size] == 1: # marker already there -> crash
-                return reward_crash
+                return self.reward_crash
             elif vec[self.num_cols * avatar_row + avatar_col + 2*size] == 0: # marker not in postgrid
-                return reward_unecessary_action
+                return self.reward_unecessary_action
             else: # marker in postgrid
-                return reward_necessary_action
+                return self.reward_necessary_action
         elif action == 5:
             if np.array_equal(vec[size:2*size], vec[2*size:3*size]) and np.array_equal(vec[3*size:3*size+3], vec[3*size+3:3*size+6]):
-                return reward_success
+                return self.reward_success
             else:
-                return reward_crash
+                return self.reward_crash
         else:
-            return reward_default
+            return self.reward_default
         
 
     def get_heuristic_reward(self, state:np.ndarray, next_state:np.ndarray, action:int, terminal:bool) -> float:
