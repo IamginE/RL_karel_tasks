@@ -510,7 +510,6 @@ test_params_rl(train_data_path="./data/train",
     save_critic=False, 
     actor_path_out="", 
     critic_path_out="")
-"""
 
 test_params_rl(train_data_path="./data/train",
     test_data_path="./data/val", 
@@ -573,3 +572,143 @@ test_params_rl(train_data_path="./data/train",
     save_critic=False, 
     actor_path_out="", 
     critic_path_out="")
+"""
+
+# test heuristic rewards
+"""
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_100_2000_heur",
+    seed=SEED, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, True),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=200, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=False, 
+    actor_path="./saved_models/actor_pretrained_first_100.pt", 
+    critic_path="",
+    save_actor=True, 
+    save_critic=True, 
+    actor_path_out="./saved_models/actor_pretrained_first_100_2000_heur.pt", 
+    critic_path_out="./saved_models/critic_pretrained_first_100_2000_heur.pt")
+"""
+# verify results on other seeds
+"""
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_100_2000_heur_seed_42",
+    seed=42, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, True),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=2000, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=False, 
+    actor_path="./saved_models/actor_pretrained_first_100.pt", 
+    critic_path="",
+    save_actor=False, 
+    save_critic=False, 
+    actor_path_out="", 
+    critic_path_out="")
+
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_100_2000_heur_seed_69",
+    seed=69, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, True),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=2000, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=False, 
+    actor_path="./saved_models/actor_pretrained_first_100.pt", 
+    critic_path="",
+    save_actor=False, 
+    save_critic=False, 
+    actor_path_out="", 
+    critic_path_out="")
+"""
+
+# plot the learning curves for reward design
+model_names=["default reward design", "only reward on success", "heuristic reward design"]
+training_tasks_shortest = []
+validation_tasks_shortest = []
+training_tasks = []
+validation_tasks = []
+training_returns = []
+validation_returns = []
+for name in ["first_100_2000_log_ppo_solution.csv", "first_100_2000_zero_log_ppo_solution.csv", "first_100_2000_heur_log_ppo_solution.csv"]:
+    data = np.loadtxt("logs/" + name, delimiter=",", skiprows=1)
+    training_returns.append(data[:, 1])
+    training_tasks_shortest.append(data[:, 2])
+    training_tasks.append(data[:, 3])
+    validation_returns.append(data[:, 4])
+    validation_tasks_shortest.append(data[:, 5])
+    validation_tasks.append(data[:, 6])
+
+
+plot(training_returns, (0,10), [200*i for i in range(0,11)], model_names, 
+    "plots/ppo_avg_return_rew_tr.png", 
+    "Average return on the training dataset.", 
+    "PPO training epochs", "average return", 
+    linspace_mul=200,
+    start_origin=True)
+plot(training_tasks_shortest, (0,24000), [200*i for i in range(0,11)], model_names, 
+    "plots/ppo_shortest_sequences_rew_tr.png", 
+    "Number of tasks solved with the shortest sequence in the training dataset.", 
+    "PPO training epochs", "number of tasks solved", 
+    linspace_mul=200,
+    start_origin=True)
+plot(training_tasks, (0,24000), [200*i for i in range(0,11)], model_names, 
+    "plots/ppo_num_solved_rew_tr.png", 
+    "Number of tasks solved in the training dataset.", 
+    "PPO training epochs", "number of tasks solved", 
+    linspace_mul=200,
+    start_origin=True)
+
+plot(validation_returns, (0,10), [200*i for i in range(0,11)], model_names,
+    "plots/ppo_avg_return_rew_val.png",
+    "Average return on the validation dataset.",
+    "PPO training epochs", "average return", 
+    linspace_mul=200,
+    start_origin=True)
+plot(validation_tasks_shortest, (0,2400), [200*i for i in range(0,11)], model_names,
+    "plots/ppo_shortest_sequences_rew_val.png",
+    "Number of tasks solved with the shortest sequence in the validation dataset.",
+    "PPO training epochs", "number of tasks solved", 
+    linspace_mul=200,
+    start_origin=True)
+plot(validation_tasks, (0,2400), [200*i for i in range(0,11)], model_names,
+    "plots/ppo_num_solved_rew_val.png",
+    "Number of tasks solved in the validation dataset.",
+    "PPO training epochs", "number of tasks solved",
+    linspace_mul=200, 
+    start_origin=True)
