@@ -40,6 +40,39 @@ def print_Karel_policy(karel_policy, path:str, max_actions:int=30) -> None:
     output = output[:-2] + ']'
     print(output)
 
+def generate_solutions(karel_policy, tasks_path:str, out_path:str, min_idx:int, max_idx:int, max_actions:int=30) -> None:
+    r"""Generates solutions for the tasks in the folder given by tasks_path and saves them in the folder given by out_path.
+    The solutions are are saved in .json files with the same id as the corresponding task file.
+    :param karel_policy: Karel policy to be evaluated.
+    :param tasks_path: Path to the folder containing the tasks to be evaluated.
+    :param out_path: Path to the folder where the solutions will be saved.
+    :param min_idx: Minimum index of the tasks to be evaluated.
+    :param max_idx: Maximum index of the tasks to be evaluated.
+    :param max_actions: Maximum number of actions to be executed by the policy."""
+    karel_policy.eval()
+    task_path = tasks_path + "/" + str(min_idx) + "_task.json"
+    num_rows, num_cols, state = load_task(task_path)
+    env = Karel_Environment(-1, "", num_rows, num_cols) # dummy environment
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    for i in range(min_idx, max_idx):
+        output = '['
+        task_path = tasks_path + "/" + str(i) + "_task.json"
+        _, _, state = load_task(task_path)
+    
+    
+
+    for _ in range(max_actions):
+            state_model = np.array([state])
+            action_probs = karel_policy(torch.from_numpy(state_model).float().to(device))
+            action = action_probs.argmax(dim=1, keepdim=True).flatten().item()
+            output += '"' + int_to_action(action) + '", '
+            state, _, terminal = env.transition(state, action)
+            if terminal:
+                break
+    output = output[:-2] + ']'
+    print(output)
+
 from networks import Policy_Network
 actor = Policy_Network(54, 6, False)
 checkpoint_actor = torch.load("./saved_models/actor_pretrained_full.pt")

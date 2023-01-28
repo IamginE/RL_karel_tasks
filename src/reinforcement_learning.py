@@ -16,7 +16,7 @@ from torch import nn
 def test_params_rl(train_data_path:str, test_data_path:str, 
     logging_path:str, id:str, seed:int, env, epochs:int, 
     gamma:float, lr_actor:float, lr_critic:float, eval_interval:int, device, 
-    vec_size:int=4*4*3+6, num_episodes:int=64, k:int=5, n_steps:int=5, clip_epsilon:float=0.2,
+    vec_size:int=4*4*3+6, num_episodes:int=32, k:int=5, n_steps:int=5, clip_epsilon:float=0.2,
     load_actor=True, load_critic=False, actor_path:str="", critic_path:str="",
     save_actor=False, save_critic=False, actor_path_out:str="", critic_path_out:str="") -> None:
     r"""
