@@ -79,10 +79,10 @@ def generate_solutions(karel_policy, tasks_path:str, out_path:str, min_idx:int, 
     
  
 
-from networks import Policy_Network
-actor = Policy_Network(54, 6, False)
-checkpoint_actor = torch.load("./saved_models/actor_first_100_11000.pt")
-actor.load_state_dict(checkpoint_actor['model_state_dict'])
-actor.set_softmax(True)
-
-generate_solutions(actor, "./data/val/task", "./test", 100000, 102400)
+# from networks import Policy_Network
+# actor = Policy_Network(54, 6, False)
+# checkpoint_actor = torch.load("./saved_models/actor_first_100_11000.pt")
+# actor.load_state_dict(checkpoint_actor['model_state_dict'])
+# actor.set_softmax(True)
+# 
+# generate_solutions(actor, "./data/val/task", "./test", 100000, 102400)

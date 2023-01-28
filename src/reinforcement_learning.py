@@ -3,7 +3,6 @@ import numpy as np
 import random
 import os
 
-from environment import Karel_Environment
 from trainer import PPO_Trainer
 from plot import plot
 from evaluation import eval_policy
