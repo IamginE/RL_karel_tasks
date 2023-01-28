@@ -599,8 +599,8 @@ test_params_rl(train_data_path="./data/train",
     critic_path="",
     save_actor=True, 
     save_critic=True, 
-    actor_path_out="./saved_models/actor_pretrained_first_100_2000_heur.pt", 
-    critic_path_out="./saved_models/critic_pretrained_first_100_2000_heur.pt")
+    actor_path_out="./saved_models/actor_first_100_2000_heur.pt", 
+    critic_path_out="./saved_models/critic_first_100_2000_heur.pt")
 """
 # verify results on other seeds
 """
@@ -658,6 +658,7 @@ test_params_rl(train_data_path="./data/train",
 """
 
 # plot the learning curves for reward design
+"""
 model_names=["default reward design", "only reward on success", "heuristic reward design"]
 training_tasks_shortest = []
 validation_tasks_shortest = []
@@ -712,3 +713,96 @@ plot(validation_tasks, (0,2400), [200*i for i in range(0,11)], model_names,
     "PPO training epochs", "number of tasks solved",
     linspace_mul=200, 
     start_origin=True)
+"""
+
+# evaluate model pretrained on first 100 tasks in a supverised manner
+# only prints out the results to the console
+"""
+train_batch_size = 64
+test_batch_size = 64
+train_kwargs = {'batch_size': train_batch_size}
+test_kwargs = {'batch_size': test_batch_size}
+
+use_cuda = torch.cuda.is_available()
+device = torch.device("cuda" if use_cuda else "cpu")
+  
+if use_cuda:
+    cuda_kwargs = {'num_workers': 1,
+                    'pin_memory': True,
+                    'shuffle': True}
+    train_kwargs.update(cuda_kwargs)
+    test_kwargs.update(cuda_kwargs)
+  
+training_data = Dataset_Supervision(csv_file="data/supervised_full.csv", vec_size=4*4*3+6)
+test_data = Dataset_Supervision(csv_file="data/supervised_val.csv", vec_size=4*4*3+6)
+train_loader = torch.utils.data.DataLoader(training_data, **train_kwargs)
+test_loader = torch.utils.data.DataLoader(test_data, **test_kwargs)
+gamma = 0.99
+
+# model trained on first 50 tasks
+actor = Policy_Network(54, 6, False)
+checkpoint_actor = torch.load("./saved_models/actor_first_100_2000.pt")
+actor.load_state_dict(checkpoint_actor['model_state_dict'])
+actor.set_softmax(False)
+
+trainer_training_data = FF_Trainer(actor, None, train_loader, None, nn.CrossEntropyLoss(), device)
+trainer_test_data = FF_Trainer(actor, None, test_loader, None, nn.CrossEntropyLoss(), device)
+
+trainer_training_data.evaluate()
+trainer_test_data.evaluate()
+"""
+
+# TRAIN THE AGENT TO BE A CHAMPION
+"""
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_100_2000_4000",
+    seed=SEED, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, False),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0002, 
+    lr_critic=0.0005, 
+    eval_interval=2000, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=True, 
+    actor_path="./saved_models/actor_first_100_2000.pt", 
+    critic_path="./saved_models/critic_first_100_2000.pt",
+    save_actor=True, 
+    save_critic=True, 
+    actor_path_out="./saved_models/actor_first_100_4000.pt", 
+    critic_path_out="./saved_models/critic_first_100_4000.pt")
+"""
+
+test_params_rl(train_data_path="./data/train",
+    test_data_path="./data/val", 
+    logging_path="./logs", 
+    id="first_100_2000_6000",
+    seed=SEED, 
+    env=Karel_Environment(24000, "./data/train", 4, 4, False),
+    epochs=2000, 
+    gamma=0.99, 
+    lr_actor=0.0001, 
+    lr_critic=0.00025, 
+    eval_interval=2000, 
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+    vec_size=4*4*3+6, 
+    num_episodes=32, 
+    k=5, 
+    n_steps=5, 
+    clip_epsilon=0.2,
+    load_actor=True, 
+    load_critic=True, 
+    actor_path="./saved_models/actor_first_100_4000.pt", 
+    critic_path="./saved_models/critic_first_100_4000.pt",
+    save_actor=True, 
+    save_critic=True, 
+    actor_path_out="./saved_models/actor_first_100_6000.pt", 
+    critic_path_out="./saved_models/critic_first_100_6000.pt")
