@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import os
 
 from data_loading import load_task
 from environment import Karel_Environment
@@ -55,23 +56,28 @@ def generate_solutions(karel_policy, tasks_path:str, out_path:str, min_idx:int, 
     env = Karel_Environment(-1, "", num_rows, num_cols) # dummy environment
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    for i in range(min_idx, max_idx):
-        output = '['
-        task_path = tasks_path + "/" + str(i) + "_task.json"
-        _, _, state = load_task(task_path)
-    
-    
+    if not os.path.isdir(out_path):
+        os.mkdir(out_path)
 
-    for _ in range(max_actions):
-            state_model = np.array([state])
-            action_probs = karel_policy(torch.from_numpy(state_model).float().to(device))
-            action = action_probs.argmax(dim=1, keepdim=True).flatten().item()
-            output += '"' + int_to_action(action) + '", '
-            state, _, terminal = env.transition(state, action)
-            if terminal:
-                break
-    output = output[:-2] + ']'
-    print(output)
+    for i in range(min_idx, max_idx):
+        file = out_path + "/" + str(i) + "_seq.json"
+        with open(file, 'w') as fp:
+            output = '['
+            task_path = tasks_path + "/" + str(i) + "_task.json"
+            _, _, state = load_task(task_path)
+            for _ in range(max_actions):
+                state_model = np.array([state])
+                action_probs = karel_policy(torch.from_numpy(state_model).float().to(device))
+                action = action_probs.argmax(dim=1, keepdim=True).flatten().item()
+                output += '"' + int_to_action(action) + '", '
+                state, _, terminal = env.transition(state, action)
+                if terminal:
+                    break
+                output = output[:-2] + ']'
+            fp.write('{  \n"sequence": ' + output + '\n}')
+    
+    
+ 
 
 from networks import Policy_Network
 actor = Policy_Network(54, 6, False)
