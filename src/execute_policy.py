@@ -73,16 +73,16 @@ def generate_solutions(karel_policy, tasks_path:str, out_path:str, min_idx:int, 
                 state, _, terminal = env.transition(state, action)
                 if terminal:
                     break
-                output = output[:-2] + ']'
-            fp.write('{  \n"sequence": ' + output + '\n}')
+            output = output[:-2] + ']'
+            fp.write('{\t\n"sequence": ' + output + '\n}')
     
     
  
 
 from networks import Policy_Network
 actor = Policy_Network(54, 6, False)
-checkpoint_actor = torch.load("./saved_models/actor_pretrained_full.pt")
+checkpoint_actor = torch.load("./saved_models/actor_first_100_11000.pt")
 actor.load_state_dict(checkpoint_actor['model_state_dict'])
 actor.set_softmax(True)
 
-print_Karel_policy(actor, "./data/train/task/0_task.json")
+generate_solutions(actor, "./data/val/task", "./test", 100000, 102400)
