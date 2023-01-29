@@ -37,8 +37,7 @@ def pretrain(data_path:str, save_path:str, batch_size:int, epochs:int,
   
     if use_cuda:
         cuda_kwargs = {'num_workers': 1,
-                        'pin_memory': True,
-                        'shuffle': True}
+                        'pin_memory': True}
         train_kwargs.update(cuda_kwargs)
   
     training_data = Dataset_Supervision(csv_file=data_path, vec_size=vec_size)
@@ -92,8 +91,7 @@ def test_params(data_path:str, test_data_path:str, plot_path:str, logging_path:s
   
     if use_cuda:
         cuda_kwargs = {'num_workers': 1,
-                        'pin_memory': True,
-                        'shuffle': True}
+                        'pin_memory': True}
         train_kwargs.update(cuda_kwargs)
   
     training_data = Dataset_Supervision(csv_file=data_path, vec_size=vec_size)

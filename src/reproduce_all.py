@@ -79,8 +79,7 @@ device = torch.device("cuda" if use_cuda else "cpu")
   
 if use_cuda:
     cuda_kwargs = {'num_workers': 1,
-                    'pin_memory': True,
-                    'shuffle': True}
+                    'pin_memory': True}
     train_kwargs.update(cuda_kwargs)
     test_kwargs.update(cuda_kwargs)
   
@@ -222,8 +221,7 @@ device = torch.device("cuda" if use_cuda else "cpu")
   
 if use_cuda:
     cuda_kwargs = {'num_workers': 1,
-                    'pin_memory': True,
-                    'shuffle': True}
+                    'pin_memory': True}
     train_kwargs.update(cuda_kwargs)
     test_kwargs.update(cuda_kwargs)
   
@@ -734,8 +732,7 @@ device = torch.device("cuda" if use_cuda else "cpu")
   
 if use_cuda:
     cuda_kwargs = {'num_workers': 1,
-                    'pin_memory': True,
-                    'shuffle': True}
+                    'pin_memory': True}
     train_kwargs.update(cuda_kwargs)
     test_kwargs.update(cuda_kwargs)
   
