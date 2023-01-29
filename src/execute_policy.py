@@ -51,11 +51,13 @@ def generate_solutions(karel_policy, tasks_path:str, out_path:str, min_idx:int, 
     :param min_idx: Minimum index of the tasks to be evaluated.
     :param max_idx: Maximum index of the tasks to be evaluated.
     :param max_actions: Maximum number of actions to be executed by the policy."""
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    karel_policy.to(device)
     karel_policy.eval()
     task_path = tasks_path + "/" + str(min_idx) + "_task.json"
     num_rows, num_cols, state = load_task(task_path)
     env = Karel_Environment(-1, "", num_rows, num_cols) # dummy environment
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     if not os.path.isdir(out_path):
         os.mkdir(out_path)
@@ -75,15 +77,13 @@ def generate_solutions(karel_policy, tasks_path:str, out_path:str, min_idx:int, 
                 if terminal:
                     break
             output = output[:-2] + ']'
-            fp.write('{\t\n"sequence": ' + output + '\n}')
+            fp.write('{\n  "sequence": ' + output + '\n}')
     
     
- 
-
 # from networks import Policy_Network
 # actor = Policy_Network(54, 6, False)
 # checkpoint_actor = torch.load("./saved_models/actor_first_100_11000.pt")
 # actor.load_state_dict(checkpoint_actor['model_state_dict'])
 # actor.set_softmax(True)
-# 
+#  
 # generate_solutions(actor, "./data/val/task", "./test", 100000, 102400)

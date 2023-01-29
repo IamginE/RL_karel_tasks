@@ -74,8 +74,6 @@ def load_task(filepath:str) -> Tuple[int, int, np.ndarray]:
 def load_seq(filepath:str) -> list:
     return read_json(filepath)["sequence"]
 
-# state_to_vec(read_json("data/train/task/0_task.json"))
-
 class Dataset_Supervision(Dataset):
     r"""
     Custom pytorch Dataset class that loads vectorized states and the corresponding action from a csv.
