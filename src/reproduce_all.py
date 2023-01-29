@@ -92,6 +92,7 @@ test_loader = torch.utils.data.DataLoader(test_data, **test_kwargs)
 actor = Policy_Network(54, 6, False)
 checkpoint_actor = torch.load("./saved_models/actor_pretrained_full.pt")
 actor.load_state_dict(checkpoint_actor['model_state_dict'])
+actor.to(device)
 actor.set_softmax(False)
 
 trainer_training_data = FF_Trainer(actor, None, train_loader, None, nn.CrossEntropyLoss(), device)
@@ -236,6 +237,7 @@ gamma = 0.99
 actor = Policy_Network(54, 6, False)
 checkpoint_actor = torch.load("./saved_models/actor_pretrained_first_50.pt")
 actor.load_state_dict(checkpoint_actor['model_state_dict'])
+actor.to(device)
 actor.set_softmax(False)
 
 trainer_training_data = FF_Trainer(actor, None, train_loader, None, nn.CrossEntropyLoss(), device)
@@ -249,8 +251,10 @@ eval_policy(actor, "./data/train", 0, 24000, 30, 4, 4, gamma, device)
 eval_policy(actor, "./data/val", 100000, 102400, 30, 4, 4, gamma, device)
 
 # model trained on first 100 tasks
+actor = Policy_Network(54, 6, False)
 checkpoint_actor = torch.load("./saved_models/actor_pretrained_first_100.pt")
 actor.load_state_dict(checkpoint_actor['model_state_dict'])
+actor.to(device)
 actor.set_softmax(False)
 
 trainer_training_data = FF_Trainer(actor, None, train_loader, None, nn.CrossEntropyLoss(), device)
@@ -264,8 +268,10 @@ eval_policy(actor, "./data/train", 0, 24000, 30, 4, 4, gamma, device)
 eval_policy(actor, "./data/val", 100000, 102400, 30, 4, 4, gamma, device)
 
 # model trained on first 4000 tasks
+actor = Policy_Network(54, 6, False)
 checkpoint_actor = torch.load("./saved_models/actor_pretrained_first_4000.pt")
 actor.load_state_dict(checkpoint_actor['model_state_dict'])
+actor.to(device)
 actor.set_softmax(False)
 
 trainer_training_data = FF_Trainer(actor, None, train_loader, None, nn.CrossEntropyLoss(), device)
@@ -743,6 +749,7 @@ gamma = 0.99
 actor = Policy_Network(54, 6, False)
 checkpoint_actor = torch.load("./saved_models/actor_first_100_2000.pt")
 actor.load_state_dict(checkpoint_actor['model_state_dict'])
+actor.to(device)
 actor.set_softmax(False)
 
 trainer_training_data = FF_Trainer(actor, None, train_loader, None, nn.CrossEntropyLoss(), device)

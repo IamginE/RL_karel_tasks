@@ -34,7 +34,7 @@ The following arguments can be passed:
 - `plot.py` contains all plotting functions used for evaluation.
 - `reinforcement_learning.py` contains the function for PPO-training with possibilities to load and save models.
 - `rollout_buffer.py` uses a rollout buffer that is heavily inspired by https://github.com/DLR-RM/stable-baselines3/blob/master/stable_baselines3/common/buffers.py. This buffer is used for storing the data produced in episodes generated when training with PPO. It also contains the routines to compute the advantage values.
-- `trainer.py` cotains classes handling training. The `PPO_Trainer` applies the PPO-Algorithm, while the `FF_trainer` is used for supervised training. Additionally, the trainer classes compute some performance metrics. Please note that I index/count epochs starting from 0.
+- `trainer.py` contains classes handling training. The `PPO_Trainer` applies the PPO-Algorithm, while the `FF_trainer` is used for supervised training. Additionally, the trainer classes compute some performance metrics. Please note that I index/count epochs starting from 0.
 - `test_env.py` contains a very simplistic environment for sanity checking the PPO-Algorithm (see below). 
 
 ## Test Environment

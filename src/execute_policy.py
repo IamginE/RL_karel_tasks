@@ -24,10 +24,11 @@ def print_Karel_policy(karel_policy, path:str, max_actions:int=30) -> None:
     :param karel_policy: Karel policy to be evaluated.
     :param path: Path to the .json file containing the tasks to be evaluated.
     :param max_actions: Maximum number of actions to be executed by the policy."""
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    karel_policy.to(device)
     karel_policy.eval()
     num_rows, num_cols, state = load_task(path)
     env = Karel_Environment(-1, "", num_rows, num_cols) # dummy environment
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     output = '['
 
     for _ in range(max_actions):
