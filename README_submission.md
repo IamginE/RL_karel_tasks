@@ -30,7 +30,7 @@ The following arguments can be passed:
 ### Python Files
 - `config.py` contains the functionality to parse arguments.
 - `create_supervised_data.py` contains a single function that uses an environment to generate datasets. that can be used for supervised training (imitation learning) and saves them at the specified location.
-- `data_loading.py` handles all data loading tasks. This includes reading from the `.json` files. It has functions that produce the state feature presentation as specified in `Bauerschmidt_project2_train.pdf`. Additionally, it contains the Dataset that handles data flow during supervised training.
+- `data_loading.py` handles all data loading tasks. This includes reading from the `.json` files. It has functions that produce the state feature presentation as specified in `project2_train.pdf`. Additionally, it contains the Dataset that handles data flow during supervised training.
 - `environment.py` contains a function for printing a visuliazation of a vectorized state and the `Karel_Environment` that handles sampling initial states, as well as calculating state transitions and rewards.
 - `evaluation.py` contains a function used to execute and evaluate policies on multiple Karel tasks and computes the number of tasks solved as well as the average return obtained.
 - `execute_policy.py` contains functions used to print out or save the actions from a policy executed on a given Karel task.
@@ -48,7 +48,7 @@ The test environment consists of 5 non-terminal states that are arranged in a st
 There are two actions: `move left` or `move right` that transition deterministically to the neighbour states. The goal is to reach a terminal state using as few moves as possible.
 
 ## Reproducibility of results
-All of the results reported in `Bauerschmidt_project2_train.pdf` can be reproduced by uncommenting the corresponding sections in `reproduce_all.py` and running it from the main folder of the project.
+All of the results reported in `project2_train.pdf` can be reproduced by uncommenting the corresponding sections in `reproduce_all.py` and running it from the main folder of the project.
 If all of the code is uncommented, all of the results are reproduced - however this needs some runtime.
 
 Please note that I index/count epochs starting from 0, while I plot them starting from 1.

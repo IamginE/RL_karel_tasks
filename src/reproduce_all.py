@@ -891,3 +891,7 @@ test_params_rl(train_data_path="./data/train",
     actor_path_out="./saved_models/actor_first_100_11000.pt", 
     critic_path_out="./saved_models/critic_first_100_11000.pt")
 """
+# from data_loading import load_task
+# from environment import state_to_string
+# _, _, state = load_task("./data/test_without_seq/task/200024_task.json")
+# print(state_to_string(state, True, 4, 4))

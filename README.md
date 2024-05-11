@@ -42,8 +42,8 @@ The test environment consists of 5 non-terminal states that are arranged in a st
 There are two actions: `move left` or `move right` that transition deterministically to the neighbour states. The goal is to reach a terminal state using as few moves as possible.
 
 ## Reproducibility of results
-All of the results reported in `Bauerschmidt_project2_train.pdf` can be reproduced by uncommenting the corresponding sections in `reproduce_all.py` and running it from the main folder of the project.
-Please note that I index/count epochs starting from 0, while I plot them starting from 1.
+All of the results reported in `project2_train.pdf` can be reproduced by uncommenting the corresponding sections in `reproduce_all.py` and running it from the main folder of the project.
+Please note that index/count epochs starting from 0, while I plot them starting from 1.
 
 I trained all models on CPU with a fixed random seed. However, since dataloading is different with GPU, the results may change when models are trained on GPU instead of CPU.
 

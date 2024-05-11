@@ -86,4 +86,4 @@ def generate_solutions(karel_policy, tasks_path:str, out_path:str, min_idx:int, 
 # actor.load_state_dict(checkpoint_actor['model_state_dict'])
 # actor.set_softmax(True)
 #  
-# generate_solutions(actor, "./data/val/task", "./test", 100000, 102400)
+# generate_solutions(actor, "./data/test_without_seq/task", "./data/project3_deploy_testseqs", 200000, 202400)
